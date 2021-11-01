@@ -30,26 +30,11 @@ class AShootPracticeCharacter : public ACharacter
 	/** Location on gun mesh where projectiles should spawn. */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USceneComponent* FP_MuzzleLocation;
-
-	/** Gun mesh: VR view (attached to the VR controller directly, no arm, just the actual gun) */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	USkeletalMeshComponent* VR_Gun;
-
-	/** Location on VR gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	USceneComponent* VR_MuzzleLocation;
+	
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
-
-	/** Motion controller (right hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UMotionControllerComponent* R_MotionController;
-
-	/** Motion controller (left hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UMotionControllerComponent* L_MotionController;
 
 public:
 	AShootPracticeCharacter();
@@ -89,6 +74,7 @@ public:
 protected:
 	
 	/** Fires a projectile. */
+	UFUNCTION(BlueprintCallable,Category="FireFunction")
 	void OnFire();
 
 	/** Resets HMD orientation and position in VR. */
@@ -137,12 +123,19 @@ protected:
 	 * @returns true if touch controls were enabled.
 	 */
 	bool EnableTouchscreenMovement(UInputComponent* InputComponent);
+	UFUNCTION()
+	AActor* BulletTrace();
 
 public:
 	/** Returns Mesh1P subobject **/
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
+	UFUNCTION(BlueprintCallable)
+	void ChangeGun(USkeletalMesh* newMesh);
+	UFUNCTION(BlueprintCallable)
+	void StartFire();
+	UFUNCTION(BlueprintCallable)
+	void EndFire();
+	FTimerHandle Timer;
 };
-

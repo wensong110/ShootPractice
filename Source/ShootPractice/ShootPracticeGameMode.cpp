@@ -69,7 +69,7 @@ void AShootPracticeGameMode::Round2()
 	UWorld* world=GetWorld();
 	if(world)
 	{
-		FVector postion=FVector(-1100,-1200,200);
+		FVector postion=FVector(-400,-1200,200);
 		world->SpawnActor(targetShooter,&postion);
 	}
 }

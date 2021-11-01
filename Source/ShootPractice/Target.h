@@ -16,12 +16,14 @@ public:
 	ATarget();
 	UPROPERTY(VisibleDefaultsOnly)
 		UStaticMeshComponent* mesh;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly)
 		UProjectileMovementComponent* projectile;
 	UPROPERTY(VisibleDefaultsOnly)
 		USceneComponent* scene;
+	UPROPERTY(EditDefaultsOnly)
+		UParticleSystem* particle;
 	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void GetScore(AActor* Shooter1);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

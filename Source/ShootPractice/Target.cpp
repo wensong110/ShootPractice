@@ -32,16 +32,6 @@ void ATarget::BeginPlay()
 void ATarget::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-}
-void ATarget::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {
-	AShootPracticeCharacter* Shooter =Cast<AShootPracticeCharacter>(OtherActor->GetOwner());
-	if (Shooter) {
-		Cast<AMyPlayerState>(Shooter->GetPlayerState())->AddScore();
-	}
-	OtherActor->Destroy();
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), particle, GetActorLocation(), GetActorRotation());
-	Destroy();
 }
 void ATarget::GetScore(AActor* Shooter1) {
 	AShootPracticeCharacter* Shooter = Cast<AShootPracticeCharacter>(Shooter1);
