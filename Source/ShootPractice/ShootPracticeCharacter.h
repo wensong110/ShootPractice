@@ -86,16 +86,10 @@ protected:
 	/** Handles stafing movement, left and right */
 	void MoveRight(float Val);
 
-	/**
-	 * Called via input to turn at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
+	UFUNCTION(BlueprintCallable)
 	void TurnAtRate(float Rate);
 
-	/**
-	 * Called via input to turn look up/down at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
+	UFUNCTION(BlueprintCallable)
 	void LookUpAtRate(float Rate);
 
 	struct TouchData

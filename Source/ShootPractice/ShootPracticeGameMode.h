@@ -16,7 +16,7 @@ public:
 	AShootPracticeGameMode();
 	UFUNCTION()
 	void updateScore();
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	UUserWidget* userWidget;
 	UFUNCTION(BlueprintCallable)
 	void nextRound();

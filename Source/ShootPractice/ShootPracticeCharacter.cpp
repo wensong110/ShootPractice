@@ -7,12 +7,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "MotionControllerComponent.h"
-#include "Collision.h"
 #include "Target.h"
-#include "DrawDebugHelpers.h"
 
 
 AShootPracticeCharacter::AShootPracticeCharacter()
@@ -56,7 +52,6 @@ AShootPracticeCharacter::AShootPracticeCharacter()
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P, FP_Gun, and VR_Gun 
 	// are set in the derived blueprint asset named MyCharacter to avoid direct content references in C++.
-	
 }
 
 void AShootPracticeCharacter::BeginPlay()
@@ -92,6 +87,7 @@ void AShootPracticeCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindAxis("TurnRate", this, &AShootPracticeCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AShootPracticeCharacter::LookUpAtRate);
+	EnableTouchscreenMovement(PlayerInputComponent);
 }
 
 void AShootPracticeCharacter::OnFire()
@@ -119,16 +115,14 @@ void AShootPracticeCharacter::OnFire()
 
 void AShootPracticeCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
-	if (TouchItem.bIsPressed == true)
+	FVector2D Size;
+	GWorld->GetGameViewport()->GetViewportSize(Size);
+	if ( Location.X>Size.X*0.8 && Location.Y>Size.Y*0.8 )
 	{
-		return;
-	}
-	if ((FingerIndex == TouchItem.FingerIndex) && (TouchItem.bMoved == false))
-	{
-		OnFire();
+		TouchItem.FingerIndex=FingerIndex;
+		StartFire();
 	}
 	TouchItem.bIsPressed = true;
-	TouchItem.FingerIndex = FingerIndex;
 	TouchItem.Location = Location;
 	TouchItem.bMoved = false;
 }
@@ -139,7 +133,27 @@ void AShootPracticeCharacter::EndTouch(const ETouchIndex::Type FingerIndex, cons
 	{
 		return;
 	}
+	if ((FingerIndex == TouchItem.FingerIndex))
+	{
+		EndFire();
+	}
 	TouchItem.bIsPressed = false;
+	TouchItem.Location=Location;
+}
+
+void AShootPracticeCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
+{
+	const FVector2D Move=FVector2D(Location.X-TouchItem.Location.X,Location.Y-TouchItem.Location.Y);
+	if(FMath::Abs(Move.X)>0||FMath::Abs(Move.Y)>0)
+	{
+		TouchItem.bMoved=true;
+		LookUpAtRate(Move.Y*0.05);
+		TurnAtRate(Move.X*0.05);
+	}else
+	{
+		TouchItem.bMoved=false;
+	}
+	TouchItem.Location=Location;
 }
 
 void AShootPracticeCharacter::MoveForward(float Value)
@@ -174,13 +188,12 @@ void AShootPracticeCharacter::LookUpAtRate(float Rate)
 
 bool AShootPracticeCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
 {
-	if (FPlatformMisc::SupportsTouchInput() || GetDefault<UInputSettings>()->bUseMouseForTouch)
+
+	//if (FPlatformMisc::SupportsTouchInput() || GetDefault<UInputSettings>()->bUseMouseForTouch)
 	{
 		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AShootPracticeCharacter::BeginTouch);
 		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &AShootPracticeCharacter::EndTouch);
-
-		//Commenting this out to be more consistent with FPS BP template.
-		//PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AShootPracticeCharacter::TouchUpdate);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AShootPracticeCharacter::TouchUpdate);
 		return true;
 	}
 	
@@ -196,8 +209,7 @@ AActor* AShootPracticeCharacter::BulletTrace() {
 	pos=((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + GetControlRotation().RotateVector(GunOffset);
 	direct = FVector(1,0,0);
 	direct = GetControlRotation().RotateVector(direct);
-	GetWorld()->LineTraceSingleByChannel(hitResult, pos, pos + 5000 * direct, ECC_WorldDynamic, param);
-	DrawDebugLine(GetWorld(), pos, pos + 8000 * direct, FColor::Red,false,0.3,99,4);
+	GetWorld()->LineTraceSingleByChannel(hitResult, pos, pos + 8000 * direct, ECC_WorldDynamic, param);
 	return hitResult.GetActor();
 }
 

@@ -37,7 +37,6 @@ void ATarget::GetScore(AActor* Shooter1) {
 	AShootPracticeCharacter* Shooter = Cast<AShootPracticeCharacter>(Shooter1);
 	if (Shooter) {
 		Cast<AMyPlayerState>(Shooter->GetPlayerState())->AddScore();
-		GEngine->AddOnScreenDebugMessage(7, 1, FColor::Red,FString::FromInt(Shooter->GetPlayerState()->GetScore()));
 	}
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), particle, GetActorLocation(), GetActorRotation());
 	Destroy();

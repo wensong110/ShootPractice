@@ -21,9 +21,8 @@ AShootPracticeGameMode::AShootPracticeGameMode()
 	HUDClass = AShootPracticeHUD::StaticClass();
 	PlayerStateClass = AMyPlayerState::StaticClass();
 	GameStateClass = AMyGameStateBase::StaticClass();
-	static ConstructorHelpers::FClassFinder<UUserWidget> scoreWidget(TEXT("/Game/FirstPersonCPP/Blueprints/WBP_Score"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> scoreWidget(TEXT("/Game/FirstPersonCPP/Blueprints/WBP_UserWidget"));
 	userWidget=CreateWidget(Super::GetWorld(),scoreWidget.Class);
-	if(userWidget) userWidget->AddToViewport();
 }
 
 void AShootPracticeGameMode::updateScore()
@@ -77,5 +76,6 @@ void AShootPracticeGameMode::Round2()
 void AShootPracticeGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	if(userWidget) userWidget->AddToViewport();
 	Round1();
 }
