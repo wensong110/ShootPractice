@@ -23,6 +23,8 @@ AShootPracticeGameMode::AShootPracticeGameMode()
 	GameStateClass = AMyGameStateBase::StaticClass();
 	static ConstructorHelpers::FClassFinder<UUserWidget> scoreWidget(TEXT("/Game/FirstPersonCPP/Blueprints/WBP_UserWidget"));
 	userWidget=CreateWidget(Super::GetWorld(),scoreWidget.Class);
+	target=ConstructorHelpers::FClassFinder<AActor>(TEXT("/Game/FirstPersonCPP/Blueprints/BP_Target_2")).Class;
+	targetShooter=ConstructorHelpers::FClassFinder<AActor>(TEXT("/Game/FirstPersonCPP/Blueprints/BP_TargetShooter")).Class;
 }
 
 void AShootPracticeGameMode::updateScore()
